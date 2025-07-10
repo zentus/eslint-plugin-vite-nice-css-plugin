@@ -1,7 +1,7 @@
 const postcss = require('postcss');
 const safeParser = require('postcss-safe-parser');
 
-module.exports = {
+const eslintPlugin = {
     meta: {
         fixable: 'whitespace',
         type: 'problem',
@@ -75,5 +75,21 @@ module.exports = {
                 });
             },
         };
+    },
+};
+
+module.exports.plugin = eslintPlugin
+
+module.exports = {
+    rules: {
+        'css-template': eslintPlugin,
+    },
+    configs: {
+        recommended: {
+            plugins: ['@zentus/eslint-plugin-vite-nice-css-plugin'],
+            rules: {
+                '@zentus/eslint-plugin-vite-nice-css-plugin/css-template': 'error',
+            },
+        },
     },
 };
