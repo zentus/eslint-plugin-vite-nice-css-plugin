@@ -10,9 +10,6 @@
     "postcss": "^8.4.38",
     "postcss-safe-parser": "^7.0.1"
   },
-  "exports": {
-    ".": "./index.js"
-  },
   "publishConfig": {
     "access": "public"
   },
