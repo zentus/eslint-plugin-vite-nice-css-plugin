@@ -78,8 +78,6 @@ const eslintPlugin = {
     },
 };
 
-module.exports.plugin = eslintPlugin
-
 module.exports = {
     rules: {
         'css-template': eslintPlugin,
