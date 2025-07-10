@@ -8,16 +8,50 @@ const eslintPlugin = {
         docs: {
             description: 'Validate and auto-indent CSS in template literals inside styles objects',
             category: 'Stylistic Issues',
-            recommended: false
-        }
+            recommended: false,
+        },
     },
+
     create(context) {
+        // Detect indent style from ESLint config
+        // Default to 4 spaces if not specified
+        const indentOptions = context.options[0] || {};
+        let indentChar = ' ';
+        let indentSize = 4;
+
+        if (indentOptions.indent) {
+            // indent option may be number or string
+            if (typeof indentOptions.indent === 'number') {
+                indentChar = ' ';
+                indentSize = indentOptions.indent;
+            } else if (typeof indentOptions.indent === 'string') {
+                if (indentOptions.indent.includes('\t')) {
+                    indentChar = '\t';
+                    indentSize = indentOptions.indent.length || 2;
+                } else {
+                    indentChar = ' ';
+                    indentSize = indentOptions.indent.length || 4;
+                }
+            }
+        } else {
+            // fallback: try to read from eslint config settings
+            const ecmaIndent = context.parserOptions?.ecmaFeatures?.jsx || false;
+            // We cannot reliably get indentation from context directly otherwise
+            // So we default to 4 spaces
+        }
+
+        // Prepare expected indent string
+        // If tabs: 2 tabs; else spaces: 4 spaces
+        let expectedIndent = '';
+        if (indentChar === '\t') {
+            expectedIndent = '\t'.repeat(2);
+        } else {
+            expectedIndent = ' '.repeat(4);
+        }
+
         return {
             VariableDeclarator(node) {
-                if (
-                    node.id.name !== 'styles' ||
-                    node.init.type !== 'ObjectExpression'
-                ) {
+                if (node.id.name !== 'styles' || node.init.type !== 'ObjectExpression') {
                     return;
                 }
 
@@ -42,7 +76,6 @@ const eslintPlugin = {
                         const lines = rawCss.split('\n');
                         const contentLines = lines.slice(1, lines.length - 1);
 
-                        const expectedIndent = '  ';
                         let needsFix = false;
 
                         contentLines.forEach((line) => {
@@ -62,7 +95,8 @@ const eslintPlugin = {
 
                             context.report({
                                 node: prop.value.quasis[0],
-                                message: 'CSS inside template literal should be indented by 2 spaces',
+                                message: `CSS inside template literal should be indented by ${indentChar === '\t' ? '2 tabs' : '4 spaces'
+                                    }`,
                                 fix(fixer) {
                                     return fixer.replaceText(
                                         prop.value.quasis[0],
@@ -80,17 +114,16 @@ const eslintPlugin = {
 
 module.exports = {
     rules: {
-        'css-template': eslintPlugin
+        'css-template': eslintPlugin,
     },
     configs: {
         recommended: {
             plugins: [
                 '@zentus/eslint-plugin-vite-nice-css-plugin',
-                '@zentus/vite-nice-css-plugin',
-                'vite-nice-css-plugin'
+                '@zentus/vite-nice-css-plugin'
             ],
             rules: {
-                'css-template': 'error'
+                'css-template': 'error',
             },
         },
     },
