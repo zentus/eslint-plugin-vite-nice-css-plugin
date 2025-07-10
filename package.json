@@ -1,6 +1,6 @@
 {
   "name": "@zentus/eslint-plugin-vite-nice-css-plugin",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A ESLint plugin for @zentus/vite-nice-css-plugin",
   "main": "index.js",
   "files": [
