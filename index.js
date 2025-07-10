@@ -1,5 +1,4 @@
 const postcss = require('postcss');
-const safeParser = require('postcss-safe-parser');
 
 const eslintPlugin = {
     meta: {
@@ -13,14 +12,11 @@ const eslintPlugin = {
     },
 
     create(context) {
-        // Detect indent style from ESLint config
-        // Default to 4 spaces if not specified
         const indentOptions = context.options[0] || {};
         let indentChar = ' ';
         let indentSize = 4;
 
         if (indentOptions.indent) {
-            // indent option may be number or string
             if (typeof indentOptions.indent === 'number') {
                 indentChar = ' ';
                 indentSize = indentOptions.indent;
@@ -33,15 +29,8 @@ const eslintPlugin = {
                     indentSize = indentOptions.indent.length || 4;
                 }
             }
-        } else {
-            // fallback: try to read from eslint config settings
-            const ecmaIndent = context.parserOptions?.ecmaFeatures?.jsx || false;
-            // We cannot reliably get indentation from context directly otherwise
-            // So we default to 4 spaces
         }
 
-        // Prepare expected indent string
-        // If tabs: 2 tabs; else spaces: 4 spaces
         let expectedIndent = '';
         if (indentChar === '\t') {
             expectedIndent = '\t'.repeat(2);
@@ -64,7 +53,7 @@ const eslintPlugin = {
                         const rawCss = prop.value.quasis[0].value.raw;
 
                         try {
-                            postcss().process(rawCss, { parser: safeParser }).sync();
+                            postcss.parse(rawCss);
                         } catch (err) {
                             context.report({
                                 node: prop.value,
