@@ -80,13 +80,17 @@ const eslintPlugin = {
 
 module.exports = {
     rules: {
-        'css-template': eslintPlugin,
+        'css-template': eslintPlugin
     },
     configs: {
         recommended: {
-            plugins: ['@zentus/eslint-plugin-vite-nice-css-plugin'],
+            plugins: [
+                '@zentus/eslint-plugin-vite-nice-css-plugin',
+                '@zentus/vite-nice-css-plugin',
+                'vite-nice-css-plugin'
+            ],
             rules: {
-                '@zentus/eslint-plugin-vite-nice-css-plugin/css-template': 'error',
+                'css-template': 'error'
             },
         },
     },
