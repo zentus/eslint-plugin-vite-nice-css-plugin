@@ -2,7 +2,7 @@
 
 ## Installation
 
-`npm install @zentus/eslint-plugin-vite-nice-css-plugin`
+`npm install --save-dev @zentus/eslint-plugin-vite-nice-css-plugin`
 
 ## Usage
 
